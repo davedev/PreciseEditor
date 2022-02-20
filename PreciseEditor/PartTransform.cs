@@ -4,9 +4,9 @@ namespace PreciseEditor
 {
     public static class PartTransform
     {
-        public static void SetWorldPosition(Part part, Vector3 newPosition)
+        public static void SetWorldPosition(Part part, Vector3d newPosition)
         {
-            Vector3 localPosition = part.transform.InverseTransformPoint(newPosition);
+            Vector3d localPosition = part.transform.InverseTransformPoint(newPosition);
 
             part.transform.position = newPosition;
             UpdateEditorGizmo(part);
@@ -24,7 +24,7 @@ namespace PreciseEditor
             EditorLogic.fetch.SetBackup();
         }
 
-        public static void Rotate(Part part, Vector3 eulerAngles, Space space)
+        public static void Rotate(Part part, Vector3d eulerAngles, Space space)
         {
             part.transform.Rotate(eulerAngles, space);
             UpdateEditorGizmo(part);
@@ -44,7 +44,7 @@ namespace PreciseEditor
 
         private static void UpdateMirrorSymmetryCounterpartsPosition(Part part)
         {
-            Vector3 mirrorPosition = MirrorPosition(part.transform.position);
+            Vector3d mirrorPosition = MirrorPosition(part.transform.position);
 
             foreach (Part symmetryCounterpart in part.symmetryCounterparts)
             {
@@ -54,17 +54,17 @@ namespace PreciseEditor
             }
         }
 
-        private static Vector3 MirrorPosition(Vector3 position)
+        private static Vector3d MirrorPosition(Vector3d position)
         {
-            Vector3 localPosition = position - EditorLogic.RootPart.transform.position;
-            Vector3 projection = Vector3.ProjectOnPlane(localPosition, EditorLogic.RootPart.transform.right);
-            Vector3 projectedPoint = EditorLogic.RootPart.transform.position + projection;
-            Vector3 offset = projectedPoint - position;
+            Vector3d localPosition = position - EditorLogic.RootPart.transform.position;
+            Vector3d projection = Vector3d.Project(localPosition, EditorLogic.RootPart.transform.right);
+            Vector3d projectedPoint = EditorLogic.RootPart.transform.position + projection;
+            Vector3d offset = projectedPoint - position;
 
             return EditorLogic.RootPart.transform.position + projection + offset;
         }
 
-        private static void UpdateRadialSymmetryCounterpartsPosition(Part part, Vector3 localPosition)
+        private static void UpdateRadialSymmetryCounterpartsPosition(Part part, Vector3d localPosition)
         {
             foreach (Part symmetryCounterpart in part.symmetryCounterparts)
             {
@@ -74,7 +74,7 @@ namespace PreciseEditor
             }
         }
 
-        private static void RotateMirrorSymmetryCounterparts(Part part, Vector3 eulerAngles, Space space)
+        private static void RotateMirrorSymmetryCounterparts(Part part, Vector3d eulerAngles, Space space)
         {
             if (space == Space.Self)
             {
@@ -84,7 +84,7 @@ namespace PreciseEditor
             eulerAngles = EditorLogic.RootPart.transform.InverseTransformDirection(eulerAngles);
             Quaternion rotation = Quaternion.Euler(eulerAngles);
             rotation.ToAngleAxis(out float angle, out Vector3 axis);
-            Vector3 mirrorAxis = new Vector3(-axis.x, axis.y, axis.z);
+            Vector3d mirrorAxis = new Vector3d(-axis.x, axis.y, axis.z);
             mirrorAxis = EditorLogic.RootPart.transform.TransformDirection(mirrorAxis);
 
             foreach (Part symmetryCounterpart in part.symmetryCounterparts)
@@ -95,7 +95,7 @@ namespace PreciseEditor
             }
         }
 
-        private static void RotateRadialSymmetryCounterparts(Part part, Vector3 eulerAngles, Space space)
+        private static void RotateRadialSymmetryCounterparts(Part part, Vector3d eulerAngles, Space space)
         {
             if (space == Space.World)
             {
@@ -114,7 +114,7 @@ namespace PreciseEditor
         {
             if (part == EditorLogic.SelectedPart)
             {
-                Vector3 position = part.transform.position;
+                Vector3d position = part.transform.position;
                 Quaternion rotation = part.transform.rotation;
 
                 var gizmoOffset = HighLogic.FindObjectOfType<EditorGizmos.GizmoOffset>();
